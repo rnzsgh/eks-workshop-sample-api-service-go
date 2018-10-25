@@ -3,12 +3,11 @@ version: 0.2
 phases:
   install:
     commands:
-      - mkdir bin
-      - curl -sS -o bin/aws-iam-authenticator https://amazon-eks.s3-us-west-2.amazonaws.com/1.10.3/2018-07-26/bin/linux/amd64/aws-iam-authenticator
-      - curl -sS -o bin/kubectl https://amazon-eks.s3-us-west-2.amazonaws.com/1.10.3/2018-07-26/bin/linux/amd64/kubectl
-      - chmod +x ./bin/kubectl ./bin/aws-iam-authenticator
-      - export PATH=$PWD/bin:$PATH
-      - apt-get update && apt-get -y install jq golang python3-pip python3-dev && pip3 install --upgrade awscli
+      - curl -sS -o aws-iam-authenticator https://amazon-eks.s3-us-west-2.amazonaws.com/1.10.3/2018-07-26/bin/linux/amd64/aws-iam-authenticator
+      - curl -sS -o kubectl https://amazon-eks.s3-us-west-2.amazonaws.com/1.10.3/2018-07-26/bin/linux/amd64/kubectl
+      - chmod +x ./kubectl ./aws-iam-authenticator
+      - export PATH=$PWD/:$PATH
+      - apt-get update && apt-get -y install jq python3-pip python3-dev && pip3 install --upgrade awscli
   pre_build:
       commands:
         - TAG="$REPOSITORY_NAME.$REPOSITORY_BRANCH.$ENVIRONMENT_NAME.$(date +%Y-%m-%d.%H.%M.%S).$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | head -c 8)"
@@ -17,7 +16,6 @@ phases:
         - export KUBECONFIG=$HOME/.kube/config
   build:
     commands:
-      - CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o main .
       - docker build --tag $REPOSITORY_URI:$TAG .
 
   post_build:
