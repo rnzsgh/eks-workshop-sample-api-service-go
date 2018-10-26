@@ -26,7 +26,7 @@ func main() {
 			res.Fib = append(res.Fib, f())
 		}
 
-		err := ioutil.WriteFile("/tmp/dat1", []byte("hello\ngo\n"), 0644)
+		err := ioutil.WriteFile("/dat1", []byte("hello\ngo\n"), 0644)
 		if err != nil {
 			fmt.Println(err)
 		}
