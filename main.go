@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"net/http"
 	"os"
 	"strings"
@@ -24,11 +23,6 @@ func main() {
 
 		for i := 1; i <= 90; i++ {
 			res.Fib = append(res.Fib, f())
-		}
-
-		err := ioutil.WriteFile("/dat1", []byte("hello\ngo\n"), 0644)
-		if err != nil {
-			fmt.Println(err)
 		}
 
 		// Beautify the JSON output
