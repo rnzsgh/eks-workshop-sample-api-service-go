@@ -33,7 +33,7 @@ func main() {
 
 		io.WriteString(w, string(out))
 
-		fmt.Println("Hello world - the log message")
+		fmt.Println("Hello world -this is rohan's first EKS build- the log message")
 	})
 	http.ListenAndServe(":8080", nil)
 }
