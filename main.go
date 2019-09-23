@@ -6,6 +6,7 @@ import (
 	"io"
 	"net/http"
 	"os"
+	"sort"
 	"strings"
 )
 
@@ -20,6 +21,7 @@ func main() {
 			pair := strings.Split(e, "=")
 			res.EnvVars = append(res.EnvVars, pair[0]+"="+pair[1])
 		}
+		sort.Strings(res.EnvVars)
 
 		for i := 1; i <= 90; i++ {
 			res.Fib = append(res.Fib, f())
