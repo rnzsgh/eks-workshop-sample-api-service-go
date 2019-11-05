@@ -20,6 +20,8 @@ phases:
         - export KUBECONFIG=$HOME/.kube/config
   build:
     commands:
+      - sudo snap stop docker
+      - sudo snap start docker
       - docker build --tag $REPOSITORY_URI:$TAG .
 
   post_build:
