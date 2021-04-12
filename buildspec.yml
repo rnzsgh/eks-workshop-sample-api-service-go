@@ -17,6 +17,7 @@ phases:
         - export KUBECONFIG=$HOME/.kube/config
   build:
     commands:
+      - docker login -u ekslabaccount -p 76700ac2-6b4d-4211-89f9-e0bacd318ef0
       - docker build --tag $REPOSITORY_URI:$TAG .
 
   post_build:
