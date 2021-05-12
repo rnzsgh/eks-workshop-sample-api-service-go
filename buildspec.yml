@@ -18,7 +18,6 @@ phases:
   build:
     commands:
       - docker build --tag $REPOSITORY_URI:$TAG .
-
   post_build:
     commands:
       - docker push $REPOSITORY_URI:$TAG
