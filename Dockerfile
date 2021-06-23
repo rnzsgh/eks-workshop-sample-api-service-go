@@ -6,6 +6,7 @@ RUN mkdir -p /go/src/github.com/eks-workshop-sample-api-service-go
 WORKDIR /go/src/github.com/eks-workshop-sample-api-service-go
 RUN useradd -u 10001 app
 COPY . .
+RUN go mod init
 RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o main .
 
 FROM scratch
