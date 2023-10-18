@@ -1,26 +1,19 @@
-# syntax=docker/dockerfile:1
+# This is a multi-stage build. First we are going to compile and then
+# create a small image for runtime.
+FROM golang:1.11.1 as builder
 
-FROM golang:1.19
+RUN mkdir -p /go/src/github.com/eks-workshop-sample-api-service-go
+WORKDIR /go/src/github.com/eks-workshop-sample-api-service-go
+RUN useradd -u 10001 app
+COPY . .
+RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o main .
 
-# Set destination for COPY
-WORKDIR /app
+FROM scratch
 
-# Download Go modules
-COPY go.mod go.sum ./
-RUN go mod download
+COPY --from=builder /go/src/github.com/eks-workshop-sample-api-service-go/main /main
+COPY --from=builder /etc/passwd /etc/passwd
+USER app
 
-# Copy the source code. Note the slash at the end, as explained in
-# https://docs.docker.com/engine/reference/builder/#copy
-COPY *.go ./
-
-# Build
-RUN CGO_ENABLED=0 GOOS=linux go build -o /docker-gs-ping
-
-# Optional:
-# To bind to a TCP port, runtime parameters must be supplied to the docker command.
-# But we can document in the Dockerfile what ports
-# the application is going to listen on by default.
-# https://docs.docker.com/engine/reference/builder/#expose
 EXPOSE 8080
 
 # Run
