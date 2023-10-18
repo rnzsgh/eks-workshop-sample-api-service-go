@@ -1,18 +1,14 @@
-# This is a multi-stage build. First we are going to compile and then
-# create a small image for runtime.
-FROM golang:1.11.1 as builder
-
-RUN mkdir -p /go/src/github.com/eks-workshop-sample-api-service-go
-WORKDIR /go/src/github.com/eks-workshop-sample-api-service-go
-RUN useradd -u 10001 app
-COPY . .
-RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o main .
-
-FROM scratch
-
-COPY --from=builder /go/src/github.com/eks-workshop-sample-api-service-go/main /main
-COPY --from=builder /etc/passwd /etc/passwd
-USER app
-
+FROM golang:1.16-buster AS builder
+WORKDIR /app
+COPY go.* ./
+RUN go mod download
+COPY *.go ./
+RUN go build -o /hello_go_http
+# Create a new release build stage
+FROM gcr.io/distroless/base-debian10
+# Set the working directory to the root directory path
+WORKDIR /
+# Copy over the binary built from the previous stage
+COPY --from=builder /hello_go_http /hello_go_http
 EXPOSE 8080
-CMD ["/main"]
+ENTRYPOINT ["/hello_go_http"]
