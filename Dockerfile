@@ -15,6 +15,4 @@ COPY --from=builder /etc/passwd /etc/passwd
 USER app
 
 EXPOSE 8080
-
-# Run
-CMD ["/docker-gs-ping"]
+CMD ["/main"]
