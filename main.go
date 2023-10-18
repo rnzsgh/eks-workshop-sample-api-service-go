@@ -1,41 +1,55 @@
 package main
 
 import (
+	"encoding/json"
+	"fmt"
+	"io"
 	"net/http"
 	"os"
-
-	"github.com/labstack/echo/v4"
-	"github.com/labstack/echo/v4/middleware"
+	"sort"
+	"strings"
 )
 
 func main() {
+	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 
-	e := echo.New()
+		f := fib()
 
-	e.Use(middleware.Logger())
-	e.Use(middleware.Recover())
+		res := &response{Message: "Hello World"}
 
-	e.GET("/", func(c echo.Context) error {
-		return c.HTML(http.StatusOK, "Hello, Docker! <3")
+		for _, e := range os.Environ() {
+			pair := strings.Split(e, "=")
+			res.EnvVars = append(res.EnvVars, pair[0]+"="+pair[1])
+		}
+		sort.Strings(res.EnvVars)
+
+		for i := 1; i <= 90; i++ {
+			res.Fib = append(res.Fib, f())
+		}
+
+		// Beautify the JSON output
+		out, _ := json.MarshalIndent(res, "", "  ")
+
+		// Normally this would be application/json, but we don't want to prompt downloads
+		w.Header().Set("Content-Type", "text/plain")
+
+		io.WriteString(w, string(out))
+
+		fmt.Println("Hello world - the log message")
 	})
-
-	e.GET("/health", func(c echo.Context) error {
-		return c.JSON(http.StatusOK, struct{ Status string }{Status: "OK"})
-	})
-
-	httpPort := os.Getenv("PORT")
-	if httpPort == "" {
-		httpPort = "8080"
-	}
-
-	e.Logger.Fatal(e.Start(":" + httpPort))
+	http.ListenAndServe(":8080", nil)
 }
 
-// Simple implementation of an integer minimum
-// Adapted from: https://gobyexample.com/testing-and-benchmarking
-func IntMin(a, b int) int {
-	if a < b {
+type response struct {
+	Message string   `json:"message"`
+	EnvVars []string `json:"env"`
+	Fib     []int    `json:"fib"`
+}
+
+func fib() func() int {
+	a, b := 0, 1
+	return func() int {
+		a, b = b, a+b
 		return a
 	}
-	return b
 }
