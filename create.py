@@ -5,7 +5,8 @@ import boto3
 app = Flask(__name__)
 
 @app.route('/')
-    return "Running the Flask App to create container"
+def index():
+    return "Hello World!"
 
 
 
