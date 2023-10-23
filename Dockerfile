@@ -1,9 +1,9 @@
 FROM public.ecr.aws/docker/library/python:3
 
-ADD create.py /
+WORKDIR /opt
+COPY . /opt/
+RUN pip install -r requirements.txt
 
-RUN pip install Flask
-RUN pip install boto3
 EXPOSE 8080
 
-ENTRYPOINT python create.py
+ENTRYPOINT ["python", "create.py"]
