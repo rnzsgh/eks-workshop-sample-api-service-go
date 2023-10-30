@@ -6,7 +6,7 @@ app = Flask(__name__)
 
 @app.route('/')
 def index(): 
-    return "Running the Flask App to create container"
+    return "Running the Flask App to create container pull from GitHub!"
 
 
 
