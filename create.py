@@ -1,4 +1,5 @@
 from flask import Flask
+from flask import Flask, render_template
 import boto3
 
 
@@ -6,7 +7,7 @@ app = Flask(__name__)
 
 @app.route('/')
 def index(): 
-    return "Running the Flask App to create container pull from GitHub!"
+    return render_template('index.html')
 
 
 
