@@ -1,6 +1,7 @@
 FROM public.ecr.aws/docker/library/python:3
 
-ADD create.py /
+COPY create.py /
+COPY /templates/. /templates
 
 RUN pip install Flask
 RUN pip install boto3
