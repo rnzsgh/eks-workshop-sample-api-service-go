@@ -1,18 +1,11 @@
-# This is a multi-stage build. First we are going to compile and then
-# create a small image for runtime.
-FROM golang:1.11.1 as builder
+FROM public.ecr.aws/docker/library/python:3
 
-RUN mkdir -p /go/src/github.com/eks-workshop-sample-api-service-go
-WORKDIR /go/src/github.com/eks-workshop-sample-api-service-go
-RUN useradd -u 10001 app
-COPY . .
-RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o main .
+COPY create.py /
+COPY /templates/. /templates
 
-FROM scratch
-
-COPY --from=builder /go/src/github.com/eks-workshop-sample-api-service-go/main /main
-COPY --from=builder /etc/passwd /etc/passwd
-USER app
+RUN pip install Flask
+RUN pip install boto3
 
 EXPOSE 8080
-CMD ["/main"]
+
+ENTRYPOINT ["python", "create.py"]
